@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using OfficeOpenXml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace JsonExcel
+{
+    class Program
+    {
+        static bool toJson = false;
+
+        static void Main(string[] args)
+        {
+            string result = "";
+            string url =
+                "http://fund.eastmoney.com/Data/FundDataPortfolio_Interface.aspx?dt=14&mc=returnjson&ft=all&pn=5000&pi=1&sc=abbname&st=asc";
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            request.Method = "GET";
+            request.ContentType = "application/json;charset=UTF-8";
+
+            var httpResponse = (HttpWebResponse) request.GetResponse();
+            using (var dataStream = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = dataStream.ReadToEnd().Replace("var returnjson= ", "");
+            }
+
+            JsonStrToXlsx(result, "DataStore/fundmanager.xlsx");
+        }
+
+        static int type_row = 2;
+        static int header_row = 3;
+        static int row = 4;
+        static int col = 1;
+        static int max_col = 1;
+        static int key_index = 0;
+
+        static void JsonStrToXlsx(string json_str, string xlsx_file)
+        {
+            row = header_row + 1;
+            col = 1;
+            max_col = 1;
+            FundManagerList fmList = JsonConvert.DeserializeObject<FundManagerList>(json_str);
+            List<FundManager> fManagers = new List<FundManager>();
+            FundManager fmEntity = null;
+            for (int i = 0; i < fmList.data.Count; i++)
+            {
+                fmEntity = new FundManager()
+                {
+                    Id = fmList.data[i][0],
+                    ManagerName = fmList.data[i][1],
+                    CompanyId = fmList.data[i][2],
+                    Company = fmList.data[i][3],
+                    Code = fmList.data[i][4],
+                    FundName = fmList.data[i][5],
+                    Totaldays = fmList.data[i][6],
+                    BestProfit = fmList.data[i][7],
+                    BestFundCode = fmList.data[i][8],
+                    BestFundName = fmList.data[i][9],
+                    TotalMoney = fmList.data[i][10],
+                };
+                fManagers.Add(fmEntity);
+            }
+
+            if (File.Exists(xlsx_file))
+            {
+                File.Delete(xlsx_file);
+            }
+
+            using (var excel = new ExcelPackage(new FileInfo(xlsx_file)))
+            {
+                var ws = excel.Workbook.Worksheets.Add(Path.GetFileNameWithoutExtension(xlsx_file));
+
+                //int fromRow, int fromCol, int toRow, int toCol
+                //ws.Cells[1, 1].Value = "数据文本，数字";
+
+                foreach (FundManager item in fManagers)
+                {
+                    col = 1;
+                    ws.Cells[row, col++].Value = item.Id;
+                    ws.Cells[row, col++].Value = item.ManagerName;
+                    ws.Cells[row, col++].Value = item.CompanyId;
+                    ws.Cells[row, col++].Value = item.Company;
+                    ws.Cells[row, col++].Value = item.Code;
+                    ws.Cells[row, col++].Value = item.FundName;
+                    ws.Cells[row, col++].Value = item.Totaldays;
+                    ws.Cells[row, col++].Value = item.BestProfit;
+                    ws.Cells[row, col++].Value = item.BestFundCode;
+                    ws.Cells[row, col++].Value = item.BestFundName;
+                    ws.Cells[row, col++].Value = item.TotalMoney;
+                    row++;
+                    max_col = Math.Max(col, max_col);
+                }
+
+                for (int i = 1; i <= max_col; i++)
+                {
+                    if (ws.Column(i) != null)
+                    {
+                        ws.Column(i).AutoFit();
+                    }
+                }
+
+                //ws.Tables.Add(new ExcelAddress(header_row, 1, row - 1, max_col - 1), "数据填写文字");
+                excel.Save();
+            }
+        }
+    }
+}

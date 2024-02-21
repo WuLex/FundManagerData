@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using OfficeOpenXml;
+using JsonExcel.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using OfficeOpenXml;
 
 namespace JsonExcel
 {
@@ -15,14 +15,15 @@ namespace JsonExcel
 
         static void Main(string[] args)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             string result = "";
             string url =
                 "http://fund.eastmoney.com/Data/FundDataPortfolio_Interface.aspx?dt=14&mc=returnjson&ft=all&pn=5000&pi=1&sc=abbname&st=asc";
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             request.ContentType = "application/json;charset=UTF-8";
 
-            var httpResponse = (HttpWebResponse) request.GetResponse();
+            var httpResponse = (HttpWebResponse)request.GetResponse();
             using (var dataStream = new StreamReader(httpResponse.GetResponseStream()))
             {
                 result = dataStream.ReadToEnd().Replace("var returnjson= ", "");
@@ -70,6 +71,7 @@ namespace JsonExcel
                 File.Delete(xlsx_file);
             }
 
+           
             using (var excel = new ExcelPackage(new FileInfo(xlsx_file)))
             {
                 var ws = excel.Workbook.Worksheets.Add(Path.GetFileNameWithoutExtension(xlsx_file));

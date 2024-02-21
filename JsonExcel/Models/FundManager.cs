@@ -6,28 +6,9 @@ using System.Threading.Tasks;
 
 namespace JsonExcel
 {
-    public class FundManagerList
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<List<string>> data { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int record { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int pages { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int curpage { get; set; }
-    }
+    /// <summary>
+    /// 已废弃
+    /// </summary>
 
     public class FundManager
     {

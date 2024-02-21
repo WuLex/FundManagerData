@@ -1,7 +1,0 @@
-F:\TECHStudy\GITALL\FundManagerData\bin\Debug\json-excel.exe.config
-F:\TECHStudy\GITALL\FundManagerData\bin\Debug\json-excel.exe
-F:\TECHStudy\GITALL\FundManagerData\bin\Debug\json-excel.pdb
-F:\TECHStudy\GITALL\FundManagerData\obj\Debug\jsonexcel.csproj.CoreCompileInputs.cache
-F:\TECHStudy\GITALL\FundManagerData\obj\Debug\jsonexcel.csproj.CopyComplete
-F:\TECHStudy\GITALL\FundManagerData\obj\Debug\json-excel.exe
-F:\TECHStudy\GITALL\FundManagerData\obj\Debug\json-excel.pdb
